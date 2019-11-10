@@ -4,7 +4,7 @@
 ## Layout terraform file
 ```
 .
-├── aws
+├── ansible-aws
     ├── README.MD
     ├── modules
     │   └── ec2_instance
@@ -28,9 +28,9 @@ export AWS_ACCESS_KEY_ID='XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 export AWS_SECRET_ACCESS_KEY='XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ```
 
-* copy **terraform/aws/terraform** dengan nama project yang akan dibuat misalkan menjadi **terraform/aws/webserver**
+* copy **aws_ansible/terraform** dengan nama project yang akan dibuat misalkan menjadi **aws_ansible/webserver**
 
-* buka **terraform/aws/webserver/main.tf** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
+* buka **aws_ansible/webserver/main.tf** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
 
 ```
 module "ec2_instance" {
@@ -149,7 +149,7 @@ jalankan perintah **terraform apply** untuk mengeksekusi template terraform dan 
 ## Provisioning terraform AWS
 tujuan dari provisioning pada terraform adalah untuk melakukan automasi konfigurasi lebih lanjut terhadap instance yang sudah selesai dibuat dengan terraform
 
-* buka **(hello/terraform/aws/webserver/main.tf)** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
+* buka **(aws_ansible/webserver/main.tf)** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
 ```
 resource "null_resource" "terraform" {
   triggers {
@@ -173,4 +173,4 @@ resource "null_resource" "terraform" {
 
 }
 ```
-tujuan dari provisioning diatas adalah untuk generate file **terraform/aws/webserver/provisioning/ansible_hosts**, berdasarkan dari ip_address baik public ataupun private yang dihasilkan dari pembuatan instance dengan terraform, file **ansible_hosts** lalu setelahnya akan menjalankan script **ansible-deploy.sh** untuk melakukan provisioning dengan aws
+tujuan dari provisioning diatas adalah untuk generate file **aws_ansible/webserver/provisioning/ansible_hosts**, berdasarkan dari ip_address baik public ataupun private yang dihasilkan dari pembuatan instance dengan terraform, file **ansible_hosts** lalu setelahnya akan menjalankan script **ansible-deploy.sh** untuk melakukan provisioning dengan aws
