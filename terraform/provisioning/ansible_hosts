@@ -2,8 +2,8 @@
 ansible_ssh_private_key_file = /home/ubuntu/.ssh/id_rsa 
 
 [webserver-ubuntu:children]
-webserver-sekolahlinux 
+webserver 
 
-[webserver-sekolahlinux]
+[webserver]
 webserver1 ansible_host=172.16.2.23 ansible_port=22 ansible_user=ubuntu
 webserver2 ansible_host=172.16.3.23 ansible_port=22 ansible_user=ubuntu

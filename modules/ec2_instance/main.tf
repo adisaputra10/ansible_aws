@@ -1,7 +1,7 @@
 ######
 # EC2 instance
 ######
-resource "aws_instance" "sekolahlinux" {
+resource "aws_instance" "terraform" {
   count = "${var.instance_count}"
 
   ami                    = "${var.ami}"

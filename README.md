@@ -11,7 +11,7 @@
     │       ├── main.tf
     │       ├── outputs.tf
     │       └── variables.tf
-    └── sekolahlinux-terraform
+    └── terraform
         ├── main.tf
         └── provisioning
             ├── ansible_hosts
@@ -28,22 +28,22 @@ export AWS_ACCESS_KEY_ID='XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 export AWS_SECRET_ACCESS_KEY='XXXXXXXXXXXXXXXXXXXXXXXXXXXX'
 ```
 
-* copy **terraform/aws/sekolahlinux-terraform** dengan nama project yang akan dibuat misalkan menjadi **terraform/aws/sekolahlinux-webserver**
+* copy **terraform/aws/terraform** dengan nama project yang akan dibuat misalkan menjadi **terraform/aws/webserver**
 
-* buka **terraform/aws/sekolahlinux-webserver/main.tf** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
+* buka **terraform/aws/webserver/main.tf** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
 
 ```
 module "ec2_instance" {
   source = "../modules/ec2_instance/"
 
   instance_count 	= 2
-  tags_name		= "webserver-sekolahlinux"
+  tags_name		= "webserver"
   tags_hostname		= "webserver"
   tags_title_number	= 1
 
   ami                         = "ami-81cefcfd"
   instance_type               = "c5.xlarge"
-  key_name                    = "sekolahlinux"
+  key_name                    = "terraform"
   monitoring                  = true
   vpc_security_group_ids      = ["sg-3c166256","sg-1c916326"]
   subnet_id                   = "subnet-2736a51e"
@@ -78,7 +78,7 @@ variable **tags_hostname** untuk menentukan Tag Hostname pada instance aws, juga
 
 * **tags_title_number**
 
-variable **tags_title_number** untuk menentukan angka atau nomer dibelakang value dari tags_name, misal jika kita mengisi value tags ini dengan angka **1** dengan jumlah instance_count **2** makanya numbering akan dimulai dari angka satu seperti ini **(webserver-sekolahlinux1, webserver-sekolahlinux2)** namun jika tags_title_number dimulai dari angka 7 maka hasilnya akan seperti berikut **(webserver-sekolahlinux7, webserver-sekolahlinux8)**
+variable **tags_title_number** untuk menentukan angka atau nomer dibelakang value dari tags_name, misal jika kita mengisi value tags ini dengan angka **1** dengan jumlah instance_count **2** makanya numbering akan dimulai dari angka satu seperti ini **(webserver1, webserver2)** namun jika tags_title_number dimulai dari angka 7 maka hasilnya akan seperti berikut **(webserver7, webserver8)**
 
 * **ami**
 
@@ -149,16 +149,16 @@ jalankan perintah **terraform apply** untuk mengeksekusi template terraform dan 
 ## Provisioning terraform AWS
 tujuan dari provisioning pada terraform adalah untuk melakukan automasi konfigurasi lebih lanjut terhadap instance yang sudah selesai dibuat dengan terraform
 
-* buka **(hello/terraform/aws/sekolahlinux-webserver/main.tf)** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
+* buka **(hello/terraform/aws/webserver/main.tf)** dan rubah paramater dibawah sesuai dengan project yang akan dibuat
 ```
-resource "null_resource" "sekolahlinux" {
+resource "null_resource" "terraform" {
   triggers {
     cluster_instance_ids = "${join("\n", module.ec2_instance.id)}"
   }
 
   provisioner "local-exec" {
     working_dir = "./provisioning"
-    command = "echo '[webserver-ubuntu:vars] \nansible_ssh_private_key_file = /home/ubuntu/.ssh/id_rsa \n\n[webserver-ubuntu:children] \nwebserver-sekolahlinux \n\n[webserver-sekolahlinux]' > ansible_hosts"
+    command = "echo '[webserver-ubuntu:vars] \nansible_ssh_private_key_file = /home/ubuntu/.ssh/id_rsa \n\n[webserver-ubuntu:children] \nwebserver \n\n[webserver]' > ansible_hosts"
   }
 
   provisioner "local-exec" {
@@ -173,4 +173,4 @@ resource "null_resource" "sekolahlinux" {
 
 }
 ```
-tujuan dari provisioning diatas adalah untuk generate file **terraform/aws/sekolahlinux-webserver/provisioning/ansible_hosts**, berdasarkan dari ip_address baik public ataupun private yang dihasilkan dari pembuatan instance dengan terraform, file **ansible_hosts** lalu setelahnya akan menjalankan script **ansible-deploy.sh** untuk melakukan provisioning dengan aws
+tujuan dari provisioning diatas adalah untuk generate file **terraform/aws/webserver/provisioning/ansible_hosts**, berdasarkan dari ip_address baik public ataupun private yang dihasilkan dari pembuatan instance dengan terraform, file **ansible_hosts** lalu setelahnya akan menjalankan script **ansible-deploy.sh** untuk melakukan provisioning dengan aws
